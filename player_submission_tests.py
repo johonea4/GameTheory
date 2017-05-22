@@ -25,6 +25,7 @@ def main():
         test = sample_board.get_legal_moves()
         h = OpenMoveEvalFn()
         print 'OpenMoveEvalFn Test: This board has a score of %s.' % (h.score(sample_board))
+        sample_board.print_board()
     except NotImplementedError:
         print 'OpenMoveEvalFn Test: Not implemented'
     except:
@@ -72,17 +73,18 @@ def main():
     to make sure your AI does better
     than random."""
     try:
-        r = CustomPlayer()
+        r = HumanPlayer()
         h = RandomPlayer()
         game = Board(r, h, 7, 7)
         output_b = game.copy()
-        winner, move_history, queen_history, termination = game.play_isolation()
-        if 'CustomPlayer' in str(winner):
+        winner, move_history, queen_history, termination = game.play_isolation(100000,True)
+        game.print_board()
+        if 'HumanPlayer' in str(winner):
             print 'CustomPlayer Test: CustomPlayer Won'
         else:
             print 'CustomPlayer Test: CustomPlayer Lost'
         # Uncomment to see game
-        # print game_as_text(winner, move_history, queen_history, game.output_history, termination, output_b)
+        print game_as_text(winner, move_history, queen_history, game.output_history, termination, output_b)
     except NotImplementedError:
         print 'CustomPlayer Test: Not Implemented'
     except:

@@ -25,6 +25,38 @@ class OpenMoveEvalFn:
             
         """
         # TODO: finish this function!
+        ap = game.get_legal_moves()
+        ip = game.get_opponent_moves()
+        aq1Moves = ap[game.get_active_players_queen()[0]]
+        aq2Moves = ap[game.get_active_players_queen()[1]]
+        iq1Moves = ip[game.get_inactive_players_queen()[0]]
+        iq2Moves = ip[game.get_inactive_players_queen()[1]]
+        
+        aqCount=0
+        for amove in aq1Moves:
+            inq2=False
+            for amove2 in aq2Moves:
+                if (amove == amove2):
+                    inq2=True
+                    break
+            if (not inq2):
+                aqCount+=1
+        aqCount += len(aq2Moves)
+
+        iqCount=0
+        for amove in iq1Moves:
+            inq2=False
+            for amove2 in iq2Moves:
+                if (amove == amove2):
+                    inq2=True
+                    break
+            if (not inq2):
+                iqCount+=1
+        iqCount += len(iq2Moves)
+
+        return aqCount - iqCount
+
+
         raise NotImplementedError
 
 
