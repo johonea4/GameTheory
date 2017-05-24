@@ -24,41 +24,25 @@ class OpenMoveEvalFn:
             int: The current state's score. Your agent's moves minus the opponent's moves.
             
         """
-        # TODO: finish this function!
+
+        aq1 = game.get_active_players_queen()[0]
+        aq2 = game.get_active_players_queen()[1]
+        iq1 = game.get_inactive_players_queen()[0]
+        iq2 = game.get_inactive_players_queen()[1]
         ap = game.get_legal_moves()
         ip = game.get_opponent_moves()
-        aq1Moves = ap[game.get_active_players_queen()[0]]
-        aq2Moves = ap[game.get_active_players_queen()[1]]
-        iq1Moves = ip[game.get_inactive_players_queen()[0]]
-        iq2Moves = ip[game.get_inactive_players_queen()[1]]
-        
-        aqCount=0
-        for amove in aq1Moves:
-            inq2=False
-            for amove2 in aq2Moves:
-                if (amove == amove2):
-                    inq2=True
-                    break
-            if (not inq2):
-                aqCount+=1
-        aqCount += len(aq2Moves)
+        aq1Moves = list(ap[aq1])
+        aq2Moves = list(ap[aq2])
+        iq1Moves = list(ip[iq1])
+        iq2Moves = list(ip[iq2])
 
-        iqCount=0
-        for amove in iq1Moves:
-            inq2=False
-            for amove2 in iq2Moves:
-                if (amove == amove2):
-                    inq2=True
-                    break
-            if (not inq2):
-                iqCount+=1
-        iqCount += len(iq2Moves)
+        aqMoves = set(aq1Moves + aq2Moves)
+        iqMoves = set(iq1Moves + iq2Moves)
 
-        return aqCount - iqCount
-
-
-        raise NotImplementedError
-
+        if(maximizing_player_turn):
+            return len(aqMoves) - len(iqMoves)
+        else:
+            return len(iqMoves) - len(aqMoves)
 
 # Submission Class 2
 class CustomEvalFn:
@@ -122,11 +106,35 @@ class CustomPlayer:
         """
         best_move, best_queen, utility = self.minimax(game, time_left, depth=self.search_depth)
         # change minimax to alphabeta after completing alphabeta part of assignment
+        if best_move == None:
+            print '***********Got NULL Move!'
         return best_move, best_queen
 
     def utility(self, game):
         """Can be updated if desired"""
         return self.eval_fn.score(game)
+
+    def isTerminal(self, game, maximizing_player):
+        """ Determines is the current game state
+            is done with. In this, either player1
+            or Player 2 will have 0 moves left
+        """
+        aq1 = game.get_active_players_queen()[0]
+        aq2 = game.get_active_players_queen()[1]
+        # iq1 = game.get_inactive_players_queen()[0]
+        # iq2 = game.get_inactive_players_queen()[1]
+        ap = game.get_legal_moves()
+        # ip = game.get_opponent_moves()
+
+        apMoves = len(ap[aq1]) + len(ap[aq2])
+        # ipMoves = len(ip[iq1]) + len(ip[iq2])
+
+        if maximizing_player:
+            return apMoves == 0
+        # if apMoves==0 or ipMoves==0:
+        #     return True
+        # return False
+        
 
     def minimax(self, game, time_left, depth=float("inf"), maximizing_player=True):
         """Implementation of the minimax algorithm
@@ -140,9 +148,44 @@ class CustomPlayer:
         Returns:
             (tuple, int, int): best_move, best_queen, best_val
         """
-        # TODO: finish this function!
-        raise NotImplementedError
-        return best_move, best_queen, best_val
+        best_move = None
+        best_queen = None
+        best_val = None
+        if depth <= 0 or time_left()<=100 or self.isTerminal(game,maximizing_player):            
+            best_val = self.eval_fn.score(game,maximizing_player)
+            return best_move,best_queen,best_val
+        
+        if maximizing_player:
+            best_val = float("-inf")
+            queenDict = game.get_legal_moves()
+            for queen in queenDict:
+                for move in queenDict[queen]: 
+                    tmpMove, tmpQueen, tmpVal = self.minimax(game.forecast_move(move,queen),time_left,depth-1,False)
+                    if tmpVal > best_val:
+                        best_val = tmpVal
+                        best_queen = queen
+                        best_move = move
+                    if time_left() <= 50: 
+                        break
+                if time_left() <= 50: 
+                    break
+            return best_move,best_queen,best_val
+        else:
+            best_val = float("+inf")
+            queenDict = game.get_legal_moves()
+            for queen in queenDict:
+                for move in queenDict[queen]:
+                    tmpMove, tmpQueen, tmpVal = self.minimax(game.forecast_move(move,queen),time_left,depth-1,True)
+                    if tmpVal < best_val:
+                        best_val = tmpVal
+                        best_queen = queen
+                        best_move = move
+                    if time_left() <= 50: 
+                        break
+                if time_left() <= 50: 
+                    break
+            return best_move,best_queen,best_val
+
 
     def alphabeta(self, game, time_left, depth=float("inf"), alpha=float("-inf"), beta=float("inf"),
                   maximizing_player=True):

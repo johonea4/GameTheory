@@ -57,10 +57,10 @@ def main():
         b.move_count = 4
 
         output_b = b.copy()
-        winner, move_history, queen_history, termination = b.play_isolation()
+        winner, move_history, queen_history, termination = b.play_isolation(1000,True)
         print 'Minimax Test: Runs Successfully'
         # Uncomment to see example game
-        # print game_as_text(winner, move_history, queen_history, b.output_history, termination, output_b)
+        print game_as_text(winner, move_history, queen_history, b.output_history, termination, output_b)
     except NotImplementedError:
         print 'Minimax Test: Not Implemented'
     except:
@@ -73,16 +73,16 @@ def main():
     to make sure your AI does better
     than random."""
     try:
-        r = HumanPlayer()
-        h = RandomPlayer()
+        r = CustomPlayer(search_depth=3)
+        h = CustomPlayer(search_depth=5)
         game = Board(r, h, 7, 7)
         output_b = game.copy()
-        winner, move_history, queen_history, termination = game.play_isolation(100000,True)
+        winner, move_history, queen_history, termination = game.play_isolation(1000,True)
         game.print_board()
-        if 'HumanPlayer' in str(winner):
-            print 'CustomPlayer Test: CustomPlayer Won'
+        if game.get_active_player() == h:
+            print 'CustomPlayer Test: Player 1 Won'
         else:
-            print 'CustomPlayer Test: CustomPlayer Lost'
+            print 'CustomPlayer Test: Player 2 Won'
         # Uncomment to see game
         print game_as_text(winner, move_history, queen_history, game.output_history, termination, output_b)
     except NotImplementedError:
