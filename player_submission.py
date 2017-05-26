@@ -104,7 +104,7 @@ class CustomPlayer:
         Returns:
             (tuple, int): best_move, best_queen
         """
-        best_move, best_queen, utility = self.minimax(game, time_left, depth=self.search_depth)
+        best_move, best_queen, utility = self.alphabeta(game, time_left, depth=self.search_depth)
         # change minimax to alphabeta after completing alphabeta part of assignment
         if best_move == None:
             print '***********Got NULL Move!'
@@ -113,6 +113,13 @@ class CustomPlayer:
     def utility(self, game):
         """Can be updated if desired"""
         return self.eval_fn.score(game)
+
+    def getMoveList(self, queenDict):
+        moveDict = dict()
+        for queen in queenDict:
+            for move in queenDict[queen]:
+                moveDict[move] = queen
+        return moveDict
 
     def isTerminal(self, game, maximizing_player):
         """ Determines is the current game state
@@ -134,11 +141,9 @@ class CustomPlayer:
         # if apMoves==0 or ipMoves==0:
         #     return True
         # return False
-        
 
     def minimax(self, game, time_left, depth=float("inf"), maximizing_player=True):
         """Implementation of the minimax algorithm
-        
         Args:
             game (Board): A board and game state.
             time_left (function): Used to determine time left before timeout
@@ -157,31 +162,25 @@ class CustomPlayer:
         
         if maximizing_player:
             best_val = float("-inf")
-            queenDict = game.get_legal_moves()
-            for queen in queenDict:
-                for move in queenDict[queen]: 
-                    tmpMove, tmpQueen, tmpVal = self.minimax(game.forecast_move(move,queen),time_left,depth-1,False)
-                    if tmpVal > best_val:
-                        best_val = tmpVal
-                        best_queen = queen
-                        best_move = move
-                    if time_left() <= 50: 
-                        break
+            moveDict = self.getMoveList(game.get_legal_moves())
+            for move in moveDict:
+                tmpMove, tmpQueen, tmpVal = self.minimax(game.forecast_move(move,moveDict[move]),time_left,depth-1,False)
+                if tmpVal > best_val:
+                    best_val = tmpVal
+                    best_queen = moveDict[move]
+                    best_move = move
                 if time_left() <= 50: 
                     break
             return best_move,best_queen,best_val
         else:
             best_val = float("+inf")
-            queenDict = game.get_legal_moves()
-            for queen in queenDict:
-                for move in queenDict[queen]:
-                    tmpMove, tmpQueen, tmpVal = self.minimax(game.forecast_move(move,queen),time_left,depth-1,True)
-                    if tmpVal < best_val:
-                        best_val = tmpVal
-                        best_queen = queen
-                        best_move = move
-                    if time_left() <= 50: 
-                        break
+            moveDict = self.getMoveList(game.get_legal_moves())
+            for move in moveDict:
+                tmpMove, tmpQueen, tmpVal = self.minimax(game.forecast_move(move,moveDict[move]),time_left,depth-1,True)
+                if tmpVal < best_val:
+                    best_val = tmpVal
+                    best_queen = moveDict[move]
+                    best_move = move
                 if time_left() <= 50: 
                     break
             return best_move,best_queen,best_val
@@ -202,6 +201,71 @@ class CustomPlayer:
         Returns:
             (tuple, int, int): best_move, best_queen, best_val
         """
-        # TODO: finish this function!
-        raise NotImplementedError
-        return best_move, best_queen, val
+        best_move = None
+        best_queen = None
+        best_val = None
+        if depth <= 0 or time_left()<=100 or self.isTerminal(game,maximizing_player):            
+            best_val = self.eval_fn.score(game,maximizing_player)
+            return best_move,best_queen,best_val
+        if maximizing_player:
+            best_val = alpha
+            moveDict = self.getMoveList(game.get_legal_moves())
+            for move in moveDict: 
+                tmpMove, tmpQueen, tmpVal = self.alphabeta(game.forecast_move(move,moveDict[move]),time_left,depth-1,alpha,beta,False)
+                if tmpVal > best_val:
+                    best_val = tmpVal
+                    best_queen = moveDict[move]
+                    best_move = move
+                alpha = max(best_val,alpha)
+                if beta <= alpha:
+                    break
+                if time_left() <= 50: 
+                    break
+            return best_move,best_queen,best_val
+        else:
+            best_val = beta
+            moveDict = self.getMoveList(game.get_legal_moves())
+            for move in moveDict: 
+                tmpMove, tmpQueen, tmpVal = self.alphabeta(game.forecast_move(move,moveDict[move]),time_left,depth-1,alpha,beta,True)
+                if tmpVal < best_val:
+                    best_val = tmpVal
+                    best_queen = moveDict[move]
+                    best_move = move
+                beta = min(best_val,beta)
+                if beta >= alpha:
+                    break
+                if time_left() <= 50: 
+                    break
+            return best_move,best_queen,best_val
+
+
+class CustomPlayerAB(CustomPlayer):
+    def __init__(self, search_depth=3, eval_fn=OpenMoveEvalFn()):
+        """Initializes your player.
+        
+        if you find yourself with a superior eval function, update the default 
+        value of `eval_fn` to `CustomEvalFn()`
+        
+        Args:
+            search_depth (int): The depth to which your agent will search
+            eval_fn (function): Utility function used by your agent
+        """
+        self.eval_fn = eval_fn
+        self.search_depth = search_depth
+
+    def move(self, game, legal_moves, time_left):
+        """Called to determine one move by your agent
+        
+        Args:
+            game (Board): The board and game state.
+            legal_moves (dict): Dictionary of legal moves and their outcomes
+            time_left (function): Used to determine time left before timeout
+            
+        Returns:
+            (tuple, int): best_move, best_queen
+        """
+        best_move, best_queen, utility = self.alphabeta(game, time_left, depth=self.search_depth)
+        # change minimax to alphabeta after completing alphabeta part of assignment
+        if best_move == None:
+            print '***********Got NULL Move!'
+        return best_move, best_queen

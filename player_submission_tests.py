@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import traceback
-from player_submission import OpenMoveEvalFn, CustomEvalFn, CustomPlayer
+from player_submission import OpenMoveEvalFn, CustomEvalFn, CustomPlayer, CustomPlayerAB
 from isolation import Board, game_as_text
 from test_players import RandomPlayer, HumanPlayer
 
@@ -39,7 +39,7 @@ def main():
         # create dummy 3x3 board
 
         p1 = RandomPlayer()
-        p2 = CustomPlayer(search_depth=3)
+        p2 = CustomPlayerAB(search_depth=3)
         #p2 = HumanPlayer()
         b = Board(p1, p2, 5, 5)
         b.__board_state__ = [
@@ -73,8 +73,10 @@ def main():
     to make sure your AI does better
     than random."""
     try:
-        r = CustomPlayer(search_depth=3)
-        h = CustomPlayer(search_depth=5)
+#        r = CustomPlayer(search_depth=3)
+#        h = CustomPlayerAB(search_depth=3)
+        r = CustomPlayer(search_depth=10)
+        h = CustomPlayerAB(search_depth=10)
         game = Board(r, h, 7, 7)
         output_b = game.copy()
         winner, move_history, queen_history, termination = game.play_isolation(1000,True)
