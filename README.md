@@ -78,11 +78,11 @@ In addition to the basic assignment, you will have the option to compete against
 
 If you wish to compete in the tournament, simply include a plaintext file with a description of your agent, titled ‘AI.txt’, and your CustomPlayer instance will be enlisted.
 
-If you compete in the AI tournament and earn 1st, 2nd or 3rd place, you will receive a bonus:
+If you compete in the AI tournament and your agent finishes in the top 10%, you will receive a bonus:
 
-- 1st place:  3 bonus points on your final course grade.
-- 2nd place: 2 bonus points on your final course grade.
-- 3rd place: 1 bonus point on your final course grade.
+- Best Overall:  5 bonus points.
+- Top 5%: 2 bonus points.
+- Top 10%: 1 bonus point.
 
 ## How to Submit Your Code
 
@@ -100,7 +100,7 @@ As discussed above, the follow classes must be populated in `player_submission.p
 2. `CustomEvalFn`
 3. `CustomPlayer`
 
-Aside from those 3 classes, any added code (such as additional tests) **MUST** be included in the **`main()`** function. We need to be certain that code outside of this function does not get accidentally executed.
+Aside from those 3 classes, any added code (such as additional tests) **MUST** be included in **`player_submissions_tests.py`** or another separate file. We need to be certain that code outside of these classes does not get accidentally executed.
 
 ### Evaluation Functions
 
@@ -188,7 +188,7 @@ class CustomPlayer():
 
 ### Built-in Tests
 
-In `player_submission_tests.py` several built-in tests can be found in the **`main()`** function. We've included these to help you test your player and evaluation function as well as to give you an idea of how the classes are used. Feel free to play around with the code and add more tests, <u>as long as it is not outside the `main()` function</u>.
+In `player_submission_tests.py` several built-in tests can be found in the **`main()`** function. We've included these to help you test your player and evaluation function as well as to give you an idea of how the classes are used. Feel free to play around with the code and add more tests.
 
 ## Helper Player classes (`test_players.py`)
 

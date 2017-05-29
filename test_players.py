@@ -26,11 +26,13 @@ class HumanPlayer():
         if not len(legal_moves[game.__active_players_queen1__]) and not len(legal_moves[game.__active_players_queen2__]):
             return None, None
         for queen in legal_moves:
-                for move in legal_moves[queen].keys():
+            for move in sorted(legal_moves[queen].keys()):
                     choice.update({i:(queen,move)})
-                    print('\t'.join(['[%d] q%d: (%d,%d)'%(i,queen,move[0],move[1])] ))
-                    i=i+1
-        
+                    if (i + 1) % 6 == 0:
+                        print '\t'.join(['[%d] q%d: (%d,%d)' % (i,queen,move[0],move[1])])
+                    else:
+                        print '\t'.join(['[%d] q%d: (%d,%d)' % (i, queen, move[0], move[1])]),
+                    i += 1
         
         valid_choice = False
         while not valid_choice:

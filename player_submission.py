@@ -21,7 +21,7 @@ class OpenMoveEvalFn:
             param2 (bool): True if maximizing player is active.
 
         Returns:
-            int: The current state's score. Your agent's moves minus the opponent's moves.
+            float: The current state's score. Your agent's moves minus the opponent's moves.
             
         """
 
@@ -62,7 +62,7 @@ class CustomEvalFn:
             maximizing_player_turn (bool): True if maximizing player is active.
 
         Returns:
-            bool: The current state's score, based on your own heuristic.
+            float: The current state's score, based on your own heuristic.
             
         """
         # TODO: finish this function!

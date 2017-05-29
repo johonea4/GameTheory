@@ -231,11 +231,14 @@ class Board:
         where (move_x, move_y) is the intended target, (pos_x, pos_y) is a space that move might result in, and
         likelihood is the chance that result happens.
         An example of iterating through this nested dictionary is included below:
-        move_dict = self.get_legal_moves()
-        for move in move_dict:
-            move_x, move_y = move
-            for (pos_x, pos_y), likelihood in move_dict[move]:
-                # do something
+        move_dict = game.get_legal_moves()
+        for queen in move_dict:
+            for move in move_dict[queen]:
+                move_x, move_y = move
+                print move_x, move_y
+                for (pos_x, pos_y), likelihood in move_dict[queen][move]:
+                    print pos_x, pos_y, likelihood
+                    # do something
         All 4 queens must be placed on the board in the first 4 moves
         """
         move_by_q1 = self.__last_queen_move__[self.get_queen_name(self.__active_players_queen1__)]
@@ -292,7 +295,7 @@ class Board:
         for r, c in valid_moves:
             distance = max(abs(r - start_r), abs(c - start_c))
             if distance < 2:
-                move_possibilities[(r, c)] = ((r, c), 1.0)
+                move_possibilities[(r, c)] = [((r, c), 1.0)]
             else:
                 mistakes = [(r + dr, c + dc) for dr, dc in directions
                             if self.move_is_legal(r + dr, c + dc)]
@@ -328,9 +331,13 @@ class Board:
         p22_r, p22_c = self.__last_queen_move__[self.__queen_22__]
         b = self.__board_state__
 
-        out = ''
-
+        out = u'   \u250f'
+        for j in range(0, len(b[0]) - 1):
+            out += ' ' + str(j) + u'  \u2533'
+        out += str(len(b[0]) - 1).rjust(2) + u'  \u2513'
+        out += '\n\r'
         for i in range(0, len(b)):
+            out += str(i).center(3) + u'\u250b '
             for j in range(0, len(b[i])):
                 if not b[i][j]:
                     out += '  '
@@ -346,9 +353,9 @@ class Board:
                 else:
                     out += '--'
 
-                out += ' | '
+                out += u' \u250b '
             out += '\n\r'
-
+        out += u'   \u2517' + u' \u2505\u2009\u2505 \u253b' * (len(b[0]) - 1) + u' \u2505\u2009\u2505 \u251b'
         return out
 
     def play_isolation(self, time_limit=5000, print_moves=False):
@@ -412,7 +419,10 @@ class Board:
                 return self.__inactive_player__, move_history, queen_history, "illegal move"
 
             last_attempt = curr_move
-            last_move = self.__apply_move__(curr_move)
+            if self.move_count > 3:
+                last_move = self.__apply_move__(curr_move)
+            else:
+                last_move = self.__apply_move__(curr_move, uncertainty=False)
             if self.__active_player__ == self.__player_1__:
                 move_history[-1][1] = last_move
             else:
