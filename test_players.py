@@ -47,3 +47,53 @@ class HumanPlayer():
                 print('Invalid index! Try again.')
         
         return choice[index][1],choice[index][0]
+
+class HumanPlayer2():
+    """Player that chooses a move according to
+    user's input."""
+    def move(self, game, legal_moves, time_left):
+        i=0
+        choice = {}
+        if not len(legal_moves[game.__active_players_queen1__]) and not len(legal_moves[game.__active_players_queen2__]):
+            return None, None
+        for queen in legal_moves:
+                for move in legal_moves[queen].keys():
+                    choice.update({i:(queen,move)})
+                    # print('\t'.join(['[%d] q%d: (%d,%d)'%(i,queen,move[0],move[1])] ))
+                    i=i+1
+        
+        # find which queens still have valid moves
+        valid_queens = []
+        if len(legal_moves[game.__active_players_queen1__]):
+            valid_queens.append(game.__active_players_queen1__)
+
+        if len(legal_moves[game.__active_players_queen2__]):
+            valid_queens.append(game.__active_players_queen2__)
+
+        # pick the queen to move
+        valid_queen = False
+        while not valid_queen:
+            try:
+                queen = int(input('Choose queen to move. Choose from ' + str(valid_queens) + ':'))
+                valid_queen = queen in valid_queens
+            except (NameError, SyntaxError) as e:
+                print('Invalid input! Try again.')
+
+        valid_position = False
+        while not valid_position:
+            try:
+                # Choose the position
+                position = tuple(int(x.strip()) for x in raw_input('input tuple (y,x) : ').split(','))
+                for tup in choice:
+                    option = choice[tup]
+                    if option[0] is queen and option[1] == position:
+                        valid_position = True
+                        break
+
+                if not valid_position:
+                    print('Illegal move! Try again.')
+            
+            except ValueError:
+                print('Invalid index! Try again.')
+        
+        return position, queen

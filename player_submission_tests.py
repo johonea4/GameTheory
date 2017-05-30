@@ -2,11 +2,9 @@
 import traceback
 from player_submission import OpenMoveEvalFn, CustomEvalFn, CustomPlayer, CustomPlayerAB
 from isolation import Board, game_as_text
-from test_players import RandomPlayer, HumanPlayer
+from test_players import RandomPlayer, HumanPlayer, HumanPlayer2
 
-
-def main():
-
+def testUtility():
     try:
         sample_board = Board(RandomPlayer(), RandomPlayer())
         # setting up the board as though we've been playing
@@ -32,6 +30,7 @@ def main():
         print 'OpenMoveEvalFn Test: ERROR OCCURRED'
         print traceback.format_exc()
 
+def testMiniMax():
     try:
         """Example test to make sure
         your minimax works, using the
@@ -67,31 +66,85 @@ def main():
         print 'Minimax Test: ERROR OCCURRED'
         print traceback.format_exc()
 
-        
-
+def testCustomPlayRandom():
     """Example test you can run
     to make sure your AI does better
     than random."""
     try:
-#        r = CustomPlayer(search_depth=3)
-#        h = CustomPlayerAB(search_depth=3)
-        r = CustomPlayer(search_depth=10)
-        h = CustomPlayerAB(search_depth=10)
+        r = CustomPlayer(search_depth=3)
+        h = RandomPlayer()
         game = Board(r, h, 7, 7)
         output_b = game.copy()
         winner, move_history, queen_history, termination = game.play_isolation(1000,True)
         game.print_board()
-        if game.get_active_player() == h:
-            print 'CustomPlayer Test: Player 1 Won'
-        else:
-            print 'CustomPlayer Test: Player 2 Won'
-        # Uncomment to see game
         print game_as_text(winner, move_history, queen_history, game.output_history, termination, output_b)
     except NotImplementedError:
         print 'CustomPlayer Test: Not Implemented'
     except:
         print 'CustomPlayer Test: ERROR OCCURRED'
         print traceback.format_exc()
+
+def testCustomABPlayRandom():
+    """Example test you can run
+    to make sure your AI does better
+    than random."""
+    try:
+        r = CustomPlayerAB(search_depth=10)
+        h = RandomPlayer()
+        game = Board(r, h, 7, 7)
+        output_b = game.copy()
+        winner, move_history, queen_history, termination = game.play_isolation(1000,True)
+        game.print_board()
+        print game_as_text(winner, move_history, queen_history, game.output_history, termination, output_b)
+    except NotImplementedError:
+        print 'CustomPlayer Test: Not Implemented'
+    except:
+        print 'CustomPlayer Test: ERROR OCCURRED'
+        print traceback.format_exc()
+
+def testCustomPlayCustomAB():
+    """Example test you can run
+    to make sure your AI does better
+    than random."""
+    try:
+        r = CustomPlayer(search_depth=3)
+        h = CustomPlayerAB(search_depth=10)
+        game = Board(r, h, 7, 7)
+        output_b = game.copy()
+        winner, move_history, queen_history, termination = game.play_isolation(1000,True)
+        game.print_board()
+        print game_as_text(winner, move_history, queen_history, game.output_history, termination, output_b)
+    except NotImplementedError:
+        print 'CustomPlayer Test: Not Implemented'
+    except:
+        print 'CustomPlayer Test: ERROR OCCURRED'
+        print traceback.format_exc()
+
+def testCustomABPlayHuman2():
+    """Example test you can run
+    to make sure your AI does better
+    than random."""
+    try:
+        r = CustomPlayerAB(search_depth=10)
+        h = HumanPlayer2()
+        game = Board(r, h, 7, 7)
+        output_b = game.copy()
+        winner, move_history, queen_history, termination = game.play_isolation(60000,True)
+        game.print_board()
+        print game_as_text(winner, move_history, queen_history, game.output_history, termination, output_b)
+    except NotImplementedError:
+        print 'CustomPlayer Test: Not Implemented'
+    except:
+        print 'CustomPlayer Test: ERROR OCCURRED'
+        print traceback.format_exc()
+
+def main():
+    # testUtility()
+    # testMiniMax()
+    # testCustomPlayRandom()
+    # testCustomABPlayRandom()
+    # testCustomPlayCustomAB()
+    testCustomABPlayHuman2()
 
 if __name__ == "__main__":
     main()
