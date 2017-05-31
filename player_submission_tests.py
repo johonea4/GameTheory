@@ -129,7 +129,7 @@ def testCustomABPlayHuman2():
         h = HumanPlayer2()
         game = Board(r, h, 7, 7)
         output_b = game.copy()
-        winner, move_history, queen_history, termination = game.play_isolation(60000,True)
+        winner, move_history, queen_history, termination = game.play_isolation(30000,True)
         game.print_board()
         print game_as_text(winner, move_history, queen_history, game.output_history, termination, output_b)
     except NotImplementedError:
